@@ -314,6 +314,27 @@ ELSE()
       SET(PA_PKGCONFIG_LDFLAGS "${PA_PKGCONFIG_LDFLAGS} -lasound")
     ENDIF()
 
+    FIND_PACKAGE(PULSEAUDIO)
+    IF(PULSEAUDIO_FOUND)
+      OPTION(PA_USE_PULSEAUDIO "Enable support for PulseAudio" ON)
+    ELSE()
+      OPTION(PA_USE_PULSEAUDIO "Disable support for PulseAudio" OFF)
+    ENDIF()
+    IF(PA_USE_PULSEAUDIO)
+      SET(PA_PRIVATE_INCLUDE_PATHS ${PA_PRIVATE_INCLUDE_PATHS} ${PULSEAUDIO_INCLUDE_DIRS})
+      SET(PA_PULSEAUDIO_SOURCES src/hostapi/pulseaudio/pa_linux_pulseaudio_block.c
+                                src/hostapi/pulseaudio/pa_linux_pulseaudio.c
+                                src/hostapi/pulseaudio/pa_linux_pulseaudio_cb.c)
+      SOURCE_GROUP("hostapi\\PULSEAUDIO" FILES ${PA_PULSEAUDIO_SOURCES})
+      SET(PA_PUBLIC_INCLUDES ${PA_PUBLIC_INCLUDES} src/hostapi/pulseaudio/pa_linux_pulseaudio_block.h
+                                                   src/hostapi/pulseaudio/pa_linux_pulseaudio.h
+                                                   src/hostapi/pulseaudio/pa_linux_pulseaudio_cb.h)
+      SET(PA_SOURCES ${PA_SOURCES} ${PA_PULSEAUDIO_SOURCES})
+      SET(PA_PRIVATE_COMPILE_DEFINITIONS ${PA_PRIVATE_COMPILE_DEFINITIONS} PA_USE_PULSEAUDIO)
+      SET(PA_LIBRARY_DEPENDENCIES ${PA_LIBRARY_DEPENDENCIES} ${PULSEAUDIO_LIBRARIES})
+      SET(PA_PKGCONFIG_LDFLAGS "${PA_PKGCONFIG_LDFLAGS} -lpulseaudio")
+    ENDIF()
+
   ENDIF()
 
   SET(PA_PKGCONFIG_LDFLAGS "${PA_PKGCONFIG_LDFLAGS} -lm -lpthread")
