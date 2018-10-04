@@ -96,11 +96,11 @@ void PaPulseAudio_updateTimeInfo(
   {
       if(record == 0)
       {
-         timeInfo->outputBufferDacTime = ((float) l_lStreamLatency / (float) 1000000);
+         timeInfo->outputBufferDacTime = timeInfo->currentTime + ((float) l_lStreamLatency / (float) 1000000);
       }
       else
       {
-        timeInfo->inputBufferAdcTime = ((float) l_lStreamLatency / (float) 1000000);
+        timeInfo->inputBufferAdcTime = timeInfo->currentTime + ((float) l_lStreamLatency / (float) 1000000);
       }
   }
 
