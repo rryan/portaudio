@@ -455,7 +455,6 @@ PaError PaPulseAudio_StartStreamCb(
     /* Ready the processor */
     PaUtil_ResetBufferProcessor(&stream->bufferProcessor);
 
-    stream->latency = 20000;
     stream->underflows = 0;
     stream->bufferAttr.fragsize = (uint32_t) - 1;
     stream->bufferAttr.prebuf = (uint32_t) - 1;
@@ -481,11 +480,12 @@ PaError PaPulseAudio_StartStreamCb(
         }
         else
         {
+            const int outputLatencyMicros = stream->suggestedOutputLatency * 1000000;
             stream->bufferAttr.maxlength =
-                pa_usec_to_bytes(stream->latency, &stream->outSampleSpec);
+                pa_usec_to_bytes(outputLatencyMicros, &stream->outSampleSpec);
             stream->bufferAttr.minreq = pa_usec_to_bytes(0, &stream->outSampleSpec);
             stream->bufferAttr.tlength =
-                pa_usec_to_bytes(stream->latency, &stream->outSampleSpec);
+                pa_usec_to_bytes(outputLatencyMicros, &stream->outSampleSpec);
 
             PA_UNLESS(stream->outBuffer =
                       PaUtil_AllocateMemory(PULSEAUDIO_BUFFER_SIZE),
@@ -519,11 +519,12 @@ PaError PaPulseAudio_StartStreamCb(
 
     if (stream->inStream != NULL)
     {
+        const int inputLatencyMicros = stream->suggestedInputLatency * 1000000;
         stream->bufferAttr.maxlength =
-            pa_usec_to_bytes(stream->latency, &stream->inSampleSpec);
+            pa_usec_to_bytes(inputLatencyMicros, &stream->inSampleSpec);
         stream->bufferAttr.minreq = pa_usec_to_bytes(0, &stream->inSampleSpec);
         stream->bufferAttr.tlength =
-            pa_usec_to_bytes(stream->latency, &stream->inSampleSpec);
+            pa_usec_to_bytes(inputLatencyMicros, &stream->inSampleSpec);
 
         PA_UNLESS(stream->inBuffer =
                   PaUtil_AllocateMemory(PULSEAUDIO_BUFFER_SIZE),

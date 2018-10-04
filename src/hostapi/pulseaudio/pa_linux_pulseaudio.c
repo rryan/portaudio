@@ -1127,6 +1127,8 @@ PaError OpenStream(
     stream->hostapi = l_ptrPulseAudioHostApi;
     stream->context = l_ptrPulseAudioHostApi->context;
     stream->mainloop = l_ptrPulseAudioHostApi->mainloop;
+    stream->suggestedInputLatency = inputParameters->suggestedLatency;
+    stream->suggestedOutputLatency = outputParameters->suggestedLatency;
 
     if (streamCallback)
     {

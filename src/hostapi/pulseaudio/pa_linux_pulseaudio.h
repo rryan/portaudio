@@ -121,6 +121,8 @@ extern "C"
         PaUnixThread thread;
         unsigned long framesPerHostCallback;
         pa_threaded_mainloop *mainloop;
+        PaTime suggestedInputLatency;
+        PaTime suggestedOutputLatency;
         pa_simple *simple;
         pa_context *context;
         pa_sample_spec outSampleSpec;
